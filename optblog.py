@@ -1,6 +1,4 @@
 import os
-import random
-import nltk
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langchain.prompts import PromptTemplate
@@ -10,18 +8,10 @@ from docx import Document
 import tiktoken
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.schema import Document as LangChainDocument
-from nltk.corpus import wordnet
-from rake_nltk import Rake
-from prompts import blog_prompt, summary_prompt, caption_prompt
-from vocab import vocab ,topicwords
+from prompts import blog_prompt, summary_prompt
 
 # Load environment variables from .env file
 load_dotenv()
-
-# Download NLTK data
-# nltk.download('punkt')
-# nltk.download('wordnet')
-# nltk.download('stopwords')
 
 class ArticleProcessor:
     def __init__(self):
@@ -46,10 +36,6 @@ class ArticleProcessor:
             "blog": PromptTemplate(
                 input_variables=["summary", "text"],
                 template=blog_prompt
-            ),
-            "caption": PromptTemplate(
-                input_variables=["summary"],
-                template=caption_prompt
             )
         }
 
@@ -88,49 +74,6 @@ class ArticleProcessor:
         doc.add_paragraph(text)
         doc.save(filename)
 
-    def paraphrase_sentence(self, sentence, excluded_words=[], topic_words=[], vocabulary=[]):
-        words = nltk.word_tokenize(sentence)
-        paraphrased_words = []
-
-        for word in words:
-            synonyms = wordnet.synsets(word)
-            if synonyms:
-                synonyms = [synonym.lemmas()[0].name() for synonym in synonyms if synonym.lemmas()[0].name() not in excluded_words and synonym.lemmas()[0].name() in vocabulary]
-                if topic_words:
-                    synonyms = [synonym for synonym in synonyms if any(topic_word in wordnet.synsets(synonym)[0].definition() for topic_word in topic_words)]
-                if synonyms:
-                    synonym = random.choice(synonyms)
-                    paraphrased_words.append(synonym)
-                else:
-                    paraphrased_words.append(word)
-            else:
-                paraphrased_words.append(word)
-
-        paraphrased_sentence = ' '.join(paraphrased_words)
-        return paraphrased_sentence
-
-    def humanize_text(self, text, excluded_words=[], topic_words=[], vocabulary=[]):
-        # Split text based on "#" or "*"
-        paragraphs = text.split('\n\n')
-        humanized_paragraphs = []
-
-        for paragraph in paragraphs:
-            # Check if the paragraph should be split
-            if paragraph.startswith("#") or paragraph.startswith("*"):
-                humanized_paragraphs.append(paragraph)
-            else:
-                sentences = nltk.sent_tokenize(paragraph)
-                humanized_sentences = []
-
-                for sentence in sentences:
-                    humanized_sentence = self.paraphrase_sentence(sentence, excluded_words, topic_words, vocabulary)
-                    humanized_sentences.append(humanized_sentence)
-
-                humanized_paragraphs.append(' '.join(humanized_sentences))
-
-        humanized_text = '\n\n'.join(humanized_paragraphs)
-        return humanized_text
-
     def process_query(self, query):
         # Get articles content
         _, content, _ = self.search_articles(query)
@@ -156,26 +99,13 @@ class ArticleProcessor:
 
         # Generate a new blog based on the summary
         blog_post = self.process_text({"summary": full_summary, "text": content}, "blog")
-        # Generate a caption based on the summary
-        caption = self.process_text(summary, "caption")
-      #  print("\nGenerated Caption:")
-     #   print(caption)
-        
-        # Paraphrase the generated blog post
-        r = Rake()
-        r.extract_keywords_from_text(blog_post)
-        keywords = r.get_ranked_phrases()
+        print("\nGenerated Blog Post:")
+        print(blog_post)
 
-        vocabulary = vocab
-        topic_words = topicwords
-        excluded_words = ["arsenic", "angstrom"]
-        humanized_blog_post = self.humanize_text(blog_post, excluded_words, topic_words, vocabulary)
-
-        # Save the paraphrased blog post to a Word document after paraphrasing
-        filename_after = f"{query}_after.docx"
-        self.save_text_to_word(humanized_blog_post, filename_after)
-
-        print(f"Paraphrased blog post saved as {filename_after}")
+        # Save to Word document with the query as filename
+        filename = f"{query}.docx"
+        self.save_text_to_word(blog_post, filename)
+        print(f"\nBlog post saved as {filename}")
 
 if __name__ == "__main__":
     processor = ArticleProcessor()
