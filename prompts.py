@@ -1,28 +1,91 @@
-summary_prompt='''Find the key points and updated info in the following text:
-
-The summary should be precise and paraphrased.
-Incorporate conversational language, slang, and idiomatic expressions that a human might use naturally
-Infuse the text with personality, emotions, and subjective opinions.
-Use expressive language to convey emotions and feelings, making the text more engaging and relatable.
-The system should generate an SEO-optimized summary.
-Text:\n\n{text}\n\nSummary'''
-
-
-blog_prompt=''' You are an expert SEO-optimized blog writer. Based on the summary and text.
-Generate a detailed blog post based on the provided summary and text.
-The blog should be SEO-optimized with bold headings and subheadings related to the topic. The content should be accurate and informative.
-Use a mix of short, medium, and long sentences. Vary sentence structures to break the monotony and make the text feel more human-writteanecdotes, stories, and specific examples. Infuse the text with subjective opinions and expressive language to convey emotions and feelings.
-Infuse the text with personality, emotions, and subjective opinions.
-Use expressive language to convey emotions and feelings, making the text more engaging and relatable.
-Ensure headings and subheadings are SEO-optimized. Use relevant keywords naturally within the content. Focus on readability and user engagement.Generate the blog using the provided content but it should be paraphrased.
-Keep in mind that the generated content should not sound like AI-generated.
-The generated content should sound like human-written text and use keywords with in the content of Blog.
-Introduce minor grammar mistakes to mimic human writing. Check for redundancy and rephrase sentences to maintain a natural flow.Summary and Text:\n\n{summary}\n\n{text}\n\nBlog Post:
-Response must be in a SEO-Optimized Blog post format.
-
+summary_prompt = '''
+Summarize the key points and recent updates in the text below. The summary should:
+- Be concise and paraphrased.
+- Use conversational language, including slang and idiomatic expressions.
+- Include personality and subjective opinions.
+- Express emotions and make the text engaging and relatable.
+- Be SEO-optimized.
+Text:\n\n{text}\n\nSummary:
 '''
 
-caption_prompt='''Create a caption based on the following summary:\n"
-                         "1. The caption should be of 3 to 4 lines and must be SEO-optimized.\n"
-                         "2. Use many relevant hashtags that should also be SEO-optimized and trending.\n"
-                         "Summary:\n\n{summary}\n\nCaption:'''
+
+
+blog_prompt = '''
+Create an expert, SEO-optimized blog post based on the summary and text provided. The blog should:
+- Be detailed and informative, using a variety of sentence structures.
+- Include anecdotes, personal stories, and specific examples.
+- Express subjective opinions and emotions.
+- Feature bold headings and subheadings that are SEO-optimized.
+- Introduce minor grammatical imperfections to mimic human writing.
+- Ensure the content does not sound AI-generated but instead appears human-written.
+- Incorporate relevant keywords naturally.
+- write a blog like you are talking and explanaing to a person.
+Summary and Text:\n\n{summary}\n\n{text}\n\nBlog Post:
+'''
+
+
+caption_prompt = '''
+Create a caption based on the summary provided. The caption should:
+- Be 3 to 4 lines long and SEO-optimized.
+- Include trending and relevant hashtags.
+- Sound conversational and relatable.
+Summary:\n\n{summary}\n\nCaption:
+'''
+title_prompt='''Generate a new title using {query}.
+-Title must be SEO optimized.
+-Title should not exceed one line (max 7 to 8 words).
+-Title must be catchy.
+'''
+
+vocab = [
+    "insight", "perspective", "explore", "discover", "community", "growth", "transformation", 
+    "experience", "journey", "innovation", "creativity", "collaboration", "passion", "dedication", 
+    "sustainability", "impact", "global", "inclusive", "diverse", "vision", "opportunity", "engagement", 
+    "support", "empowerment", "connection", "leadership", "values", "future", "challenge", "solutions", 
+    "change", "potential", "development", "strategy", "inspiration", "well-being", "success", "motivation", 
+    "knowledge", "wisdom", "culture", "tradition", "heritage", "responsibility", "trust", "integrity", 
+    "respect", "empathy", "compassion", "innovation", "progress", "achievement", "celebration", "joy", 
+    "hope", "resilience", "strength", "aspiration", "balance", "harmony", "adventure", "curiosity", 
+    "discovery", "wonder", "enrichment", "understanding", "clarity", "focus", "mindfulness", "serenity", 
+    "peace", "wellness", "gratitude", "appreciation", "kindness", "unity", "togetherness", "support", 
+    "encouragement", "persistence", "tenacity", "ambition", "drive", "enthusiasm", "pride", "humility", 
+    "confidence", "self-awareness", "adaptability", "flexibility", "resourcefulness", "initiative", 
+    "entrepreneurship", "innovation", "creativity", "design", "expression", "artistry", "craftsmanship", 
+    "excellence", "mastery", "skill", "competence", "expertise", "professionalism", "knowledge", "insight", 
+    "understanding", "wisdom", "learning", "education", "development", "training", "mentorship", "guidance", 
+    "coaching", "support", "advocacy", "inclusion", "diversity", "equality", "fairness", "justice", 
+    "respect", "dignity", "humanity", "compassion", "empathy", "care", "concern", "consideration", "responsibility", 
+    "accountability", "ethics", "integrity", "honesty", "transparency", "trust", "faith", "belief", "confidence", 
+    "hope", "optimism", "positivity", "enthusiasm", "energy", "vitality", "health", "well-being", "fitness", 
+    "nutrition", "diet", "lifestyle", "balance", "harmony", "peace", "serenity", "tranquility", "calm", 
+    "relaxation", "recreation", "leisure", "fun", "enjoyment", "pleasure", "happiness", "joy", "delight", 
+    "satisfaction", "contentment", "gratitude", "appreciation", "thankfulness", "recognition", "acknowledgment", 
+    "respect", "admiration", "praise", "commendation", "reward", "celebration", "success", "achievement", 
+    "accomplishment", "victory", "triumph", "conquest", "glory", "honor", "fame", "renown", "reputation", 
+    "prestige", "status", "standing", "position", "rank", "title", "role", "duty", "responsibility", 
+    "obligation", "commitment", "promise", "pledge", "vow", "oath", "declaration", "assertion", "statement", 
+    "claim", "opinion", "view", "belief", "conviction", "principle", "value", "ethic", "standard", "norm", 
+    "criterion", "benchmark", "yardstick", "measure", "indicator", "sign", "symbol", "emblem", "token", 
+    "representation", "illustration", "example", "instance", "case", "model", "prototype", "pattern", "template", 
+    "framework", "structure", "system", "method", "approach", "strategy", "plan", "program", "project", 
+    "initiative", "campaign", "effort", "endeavor", "enterprise", "venture", "activity", "task", "job", 
+    "work", "operation", "function", "role", "duty", "responsibility", "service", "support", "assistance", 
+    "aid", "help", "benefit", "advantage", "gain", "profit", "reward", "return", "outcome", "result", 
+    "consequence", "effect", "impact", "influence", "force", "power", "control", "authority", "leadership", 
+    "management", "direction", "guidance", "supervision", "oversight", "regulation", "governance", 
+    "administration", "organization", "coordination", "collaboration", "partnership", "teamwork", 
+    "cooperation", "unity", "solidarity", "harmony", "synchronization", "integration", "connection", 
+    "relationship", "association", "affiliation", "bond", "link", "tie", "union", "alliance", "coalition", 
+    "federation", "network", "system", "structure", "framework", "foundation", "base", "platform", 
+    "support", "basis", "ground", "cornerstone", "keystone", "pillar", "backbone", "mainstay", "linchpin"
+]
+
+topicwords = [
+    "innovation", "development", "learning", "skills", "opportunities", "benefits", "market", "tools", 
+    "platforms", "technology", "user", "needs", "requirements", "design", "testing", "reliability", 
+    "challenges", "creativity", "expertise", "productivity", "effectiveness", "projects", "platform", 
+    "real-world scenarios", "problem-solving", "automation", "job displacement", "ethical dilemmas", 
+    "future", "possibilities", "synergy", "trend", "landscape", "embrace", "transformation", "boost", 
+    "flexibility", "skills", "stand out", "professional network", "certification", "opportunities", 
+    "endeavor", "journey", "innovation", "game-changer", "competitive edge"
+]
