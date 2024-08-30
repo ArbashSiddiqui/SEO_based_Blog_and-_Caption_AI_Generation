@@ -94,7 +94,7 @@ class CaptionProcessor:
 if __name__ == "__main__":
     # Initialize CaptionProcessor with API keys
     tavily_api_key = "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"
-    openai_api_key = "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"
+    openai_api_key = "Your_openAI_key"
 
     processor = CaptionProcessor(tavily_api_key, openai_api_key)
 
